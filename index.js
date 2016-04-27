@@ -31,6 +31,8 @@ function countUp()
     clearInterval(countInterval);
     numbers.displayClear();
     led.alloff()
+    if (currentDigit == 4) led.setGreen(1)
+    else led.setRed(1)
     console.log('Button Released on: ' + currentDigit);
   }
   else
