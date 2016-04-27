@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/stephan-dowding/big_button/issues"
   },
-  "homepage": "https://github.com/stephan-dowding/big_button"
+  "homepage": "https://github.com/stephan-dowding/big_button",
+  "dependencies": {
+    "mraa": "^0.10.1"
+  }
 }
