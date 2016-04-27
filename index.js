@@ -1,4 +1,5 @@
 var numbers = require('./numbers')
+var led = require('./led')
 var mraa = require('mraa');
 
 numbers.displayDot();
@@ -17,6 +18,7 @@ function readButton()
   console.log('Button is: ' + buttonState);
   butCount = buttonState ? butCount + 1 : 0;
   if (butCount >= 3) {
+    led.setBlue(1)
     clearInterval(buttonInterval);
     countInterval = setInterval(countUp, 1000);
   }
@@ -28,6 +30,7 @@ function countUp()
   {
     clearInterval(countInterval);
     numbers.displayClear();
+    led.alloff()
     console.log('Button Released on: ' + currentDigit);
   }
   else
