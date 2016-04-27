@@ -58,7 +58,7 @@ device.subscribe(mainTopic);
 
 function clearAll() {
   if (buttonInterval) clearInterval(buttonInterval);
-  if (countInterval) clearInterval(buttonInterval);
+  if (countInterval) clearInterval(countInterval);
   numbers.displayClear();
   led.alloff();
 }
