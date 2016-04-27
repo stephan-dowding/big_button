@@ -19,10 +19,10 @@ numbers.displayDash();
 var button = new mraa.Gpio(2); //setup digital read on Digital pin #6 (D6)
 button.dir(mraa.DIR_IN);
 
-currentDigit = 0;
+var currentDigit;
 var buttonInterval;
 var countInterval;
-var butCount = 0;
+var butCount;
 
 function readButton()
 {
@@ -59,6 +59,8 @@ device.subscribe(mainTopic);
 function clearAll() {
   if (buttonInterval) clearInterval(buttonInterval);
   if (countInterval) clearInterval(countInterval);
+  currentDigit = 0;
+  butCount = 0;
   numbers.displayClear();
   led.alloff();
 }
