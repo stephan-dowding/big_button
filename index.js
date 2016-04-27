@@ -1,14 +1,26 @@
 var numbers = require('./numbers')
 var led = require('./led')
 var mraa = require('mraa');
+var awsIot = require('aws-iot-device-sdk');
 
-numbers.displayDot();
+var deviceName = "trumpet-edison";
+var deviceCredentials = {
+  keyPath: '/home/root/aws_certs/private.pem.key',
+  certPath: '/home/root/aws_certs/certificate.pem.crt',
+  caPath: '/home/root/aws_certs/rootCA.pem.crt',
+  clientId: deviceName,
+  region: 'ap-southeast-1',
+  reconnectPeriod: 1500
+};
+var mainTopic = "mozart";
+
+numbers.displayDash();
 
 var button = new mraa.Gpio(2); //setup digital read on Digital pin #6 (D6)
 button.dir(mraa.DIR_IN);
 
 currentDigit = 0;
-var buttonInterval = setInterval(readButton, 100);
+var buttonInterval;
 var countInterval;
 var butCount = 0;
 
@@ -28,11 +40,8 @@ function countUp()
 {
   if (!button.read())
   {
-    clearInterval(countInterval);
-    numbers.displayClear();
-    led.alloff()
-    if (currentDigit == 4) led.setGreen(1)
-    else led.setRed(1)
+    if (currentDigit == 4) disarm();
+    else boom();
     console.log('Button Released on: ' + currentDigit);
   }
   else
@@ -42,3 +51,57 @@ function countUp()
     numbers['display' + currentDigit]();
   }
 }
+
+var device = awsIot.device(deviceCredentials);
+
+device.subscribe(mainTopic);
+
+function clearAll() {
+  if (buttonInterval) clearInterval(buttonInterval);
+  if (countInterval) clearInterval(buttonInterval);
+  numbers.displayClear();
+  led.alloff();
+}
+
+function disarm() {
+  console.log("Disarm!");
+  clearAll();
+  led.setGreen(1);
+  device.publish(mainTopic, JSON.stringify({ event: 'disarmed', device: deviceName }));
+}
+
+function boom() {
+  console.log("Boom!");
+  clearAll();
+  led.setRed(1);
+  device.publish(mainTopic, JSON.stringify({ event: 'boom', device: deviceName }));
+}
+
+function arm() {
+  console.log("Armed!");
+  clearAll();
+  numbers.displayDot();
+  buttonInterval = setInterval(readButton, 100)
+  device.publish(mainTopic, JSON.stringify({ event: 'armed', device: deviceName }));
+}
+
+function reset() {
+  console.log("Reset.");
+  clearAll();
+  numbers.displayDash();
+  currentDigit = 0;
+}
+
+device.on('message', function(topic, payload) {
+    console.log('Message Received - Topic: ' + topic + ' Payload: ' + payload.toString());
+
+    payload = JSON.parse(payload);
+    switch (payload.event) {
+      case "arm":
+        arm();
+        break;
+      case "reset":
+        reset();
+        break;
+    }
+});

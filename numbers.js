@@ -160,3 +160,15 @@ exports.displayDot = function()
   SegG.write(0);
   SegX.write(1);
 }
+
+exports.displayDash = function()
+{
+  SegA.write(0);
+  SegB.write(0);
+  SegC.write(0);
+  SegD.write(0);
+  SegE.write(0);
+  SegF.write(0);
+  SegG.write(1);
+  SegX.write(0);
+}

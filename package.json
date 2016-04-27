@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/stephan-dowding/big_button",
   "dependencies": {
+    "aws-iot-device-sdk": "^1.0.12",
     "mraa": "^0.10.1"
   }
 }
