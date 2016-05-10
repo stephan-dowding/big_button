@@ -94,6 +94,10 @@ function reset() {
   currentDigit = 0;
 }
 
+function config(data) {
+  device.publish(mainTopic, JSON.stringify({ event: "configured", device: deviceName, data: data}))
+}
+
 device.on('message', function(topic, payload) {
     console.log('Message Received - Topic: ' + topic + ' Payload: ' + payload.toString());
 
@@ -101,6 +105,11 @@ device.on('message', function(topic, payload) {
     switch (payload.event) {
       case "arm":
         arm();
+        break;
+      case "config":
+        if (payload.device === deviceName) {
+          config(payload.data);
+        }
         break;
       case "reset":
         reset();
