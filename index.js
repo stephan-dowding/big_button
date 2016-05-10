@@ -13,6 +13,7 @@ var deviceCredentials = {
   reconnectPeriod: 1500
 };
 var mainTopic = "mozart";
+var configData = {};
 
 numbers.displayDash();
 
@@ -30,7 +31,7 @@ function readButton()
   console.log('Button is: ' + buttonState);
   butCount = buttonState ? butCount + 1 : 0;
   if (butCount >= 3) {
-    led.setBlue(1)
+    led.setRGB(configData.led);
     clearInterval(buttonInterval);
     countInterval = setInterval(countUp, 1000);
   }
@@ -40,7 +41,7 @@ function countUp()
 {
   if (!button.read())
   {
-    if (currentDigit == 4) disarm();
+    if (currentDigit === configData.disarmCount) disarm();
     else boom();
     console.log('Button Released on: ' + currentDigit);
   }
@@ -95,8 +96,9 @@ function reset() {
 }
 
 function config(data) {
+  console.log("Config", data)
+  configData = data
   device.publish(mainTopic, JSON.stringify({ event: "configured", device: deviceName, data: data}))
-  led.setRGB(data.led)
 }
 
 device.on('message', function(topic, payload) {
