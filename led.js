@@ -26,3 +26,8 @@ exports.setBlue = function(on)
 {
   blue.write(on);
 }
+exports.setRGB = function(rgbObj) {
+  red.write(rgbObj.R)
+  green.write(rgbObj.G)
+  blue.write(rgbObj.B)
+}

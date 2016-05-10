@@ -96,6 +96,7 @@ function reset() {
 
 function config(data) {
   device.publish(mainTopic, JSON.stringify({ event: "configured", device: deviceName, data: data}))
+  led.setRGB(data.led)
 }
 
 device.on('message', function(topic, payload) {
