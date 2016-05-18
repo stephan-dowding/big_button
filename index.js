@@ -36,7 +36,7 @@ function startLoop(configData) {
       ledTimeout = setTimeout(function () {
         led.setRGB(configData.led);
       });
-    } else if (buttonPressed) {
+    } else if (buttonPressed && !buttonState) {
       clearTimeout(ledTimeout);
       clearInterval(deviceInterval);
       clearInterval(counterInterval);
