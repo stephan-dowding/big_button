@@ -42,7 +42,7 @@ function startLoop(configData) {
       clearInterval(counterInterval);
       buttonPublisher.publish(pressTime);
     }
-  }, 10);
+  }, 50);
 
   return buttonPublisher;
 }
