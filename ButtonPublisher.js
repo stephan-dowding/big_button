@@ -6,7 +6,7 @@ ButtonPublisher.prototype.publish = function (pressTime) {
   var pressDuration = (new Date() - pressTime) / 1000;
   pressDuration = Math.floor(pressDuration);
   this.listeners.forEach(function (listener) {
-    listener.apply(this, pressDuration);
+    listener.call(this, pressDuration);
   }, this);
 };
 
