@@ -14,4 +14,4 @@ ButtonPublisher.prototype.subscribe = function (fn) {
   this.listeners.push(fn);
 };
 
-exports = ButtonPublisher;
+module.exports = ButtonPublisher;
