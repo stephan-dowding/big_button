@@ -26,23 +26,20 @@ device.subscribe(mainTopic);
 
 function startLoop(configData) {
   var buttonPublisher = new ButtonPublisher();
-  var buttonPressed, pressTime, counterInterval, ledTimeout;
+  var buttonPressed, pressTime, counterInterval;
   var deviceInterval = setInterval(function () {
     var buttonState = button.read();
     if (buttonState && !buttonPressed) {
       buttonPressed = true;
       pressTime = new Date();
       counterInterval = startCounter();
-      ledTimeout = setTimeout(function () {
-        led.setRGB(configData.led);
-      });
+      led.setRGB(configData.led);
     } else if (buttonPressed && !buttonState) {
-      clearTimeout(ledTimeout);
       clearInterval(deviceInterval);
       clearInterval(counterInterval);
       buttonPublisher.publish(pressTime);
     }
-  }, 50);
+  }, 100);
 
   return buttonPublisher;
 }
