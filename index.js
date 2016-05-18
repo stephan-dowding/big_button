@@ -24,22 +24,37 @@ button.dir(mraa.DIR_IN);
 var device = awsIot.device(deviceCredentials);
 device.subscribe(mainTopic);
 
+var IDLE = 0;
+var PRESSED = 1;
+var PROCESSING = 2;
+
 function startLoop(configData) {
-  var buttonPublisher = new ButtonPublisher();
-  var buttonPressed, pressTime, counterInterval;
+  var buttonPublisher = new ButtonPublisher(),
+      state = IDLE,
+      pressTime, counterInterval;
+
   var deviceInterval = setInterval(function () {
+    if(state === PROCESSING) return;
+
     var buttonState = button.read();
-    if (buttonState && !buttonPressed) {
-      buttonPressed = true;
+    if (buttonState && state === IDLE) {
+      state = PRESSED;
       pressTime = new Date();
       counterInterval = startCounter();
       led.setRGB(configData.led);
-    } else if (buttonPressed && !buttonState) {
-      clearInterval(deviceInterval);
-      clearInterval(counterInterval);
-      buttonPublisher.publish(pressTime);
+    } else if (!buttonState && state === PRESSED) {
+      state = PROCESSING;
+      setTimeout(function () {
+        if (button.read()) {
+          state = PRESSED;
+        } else {
+          clearInterval(deviceInterval);
+          clearInterval(counterInterval);
+          buttonPublisher.publish(new Date(pressTime + 300));
+        }
+      }, 300);
     }
-  }, 100);
+  }, 10);
 
   return buttonPublisher;
 }
