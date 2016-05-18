@@ -39,7 +39,7 @@ function startLoop(configData) {
     var buttonState = button.read();
     if (buttonState && state === IDLE) {
       state = PRESSED;
-      pressTime = new Date();
+      pressTime = Date.now();
       counterInterval = startCounter();
       led.setRGB(configData.led);
     } else if (!buttonState && state === PRESSED) {
