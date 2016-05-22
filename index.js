@@ -60,10 +60,10 @@ function startLoop(configData) {
 }
 
 function startCounter() {
-  var digit = 0;
-  numbers['display' + digit]();
+  var digit = -1;
   return setInterval(function () {
     digit += 1;
+    if (digit > 9) { digit = 0; }
     numbers['display' + digit]();
   }, 1000);
 }
