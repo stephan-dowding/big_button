@@ -2,11 +2,9 @@ function ButtonPublisher() {
   this.listeners = [];
 }
 
-ButtonPublisher.prototype.publish = function (pressTime) {
-  var pressDuration = (new Date() - pressTime) / 1000;
-  pressDuration = Math.floor(pressDuration);
+ButtonPublisher.prototype.publish = function (digit) {
   this.listeners.forEach(function (listener) {
-    listener.call(this, pressDuration);
+    listener.call(this, digit);
   }, this);
 };
 

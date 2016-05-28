@@ -31,6 +31,7 @@ var PROCESSING = 2;
 function startLoop(configData) {
   var buttonPublisher = new ButtonPublisher(),
       state = IDLE,
+      data = { digit: -1 },
       pressTime, counterInterval;
 
   var deviceInterval = setInterval(function () {
@@ -39,18 +40,18 @@ function startLoop(configData) {
     var buttonState = button.read();
     if (buttonState && state === IDLE) {
       state = PRESSED;
-      pressTime = Date.now();
-      counterInterval = startCounter();
+      counterInterval = startCounter(data);
       led.setRGB(configData.led);
     } else if (!buttonState && state === PRESSED) {
       state = PROCESSING;
+      var digit = data.digit;
       setTimeout(function () {
         if (button.read()) {
           state = PRESSED;
         } else {
           clearInterval(deviceInterval);
           clearInterval(counterInterval);
-          buttonPublisher.publish(new Date(pressTime + 300));
+          buttonPublisher.publish(digit);
         }
       }, 300);
     }
@@ -59,12 +60,12 @@ function startLoop(configData) {
   return buttonPublisher;
 }
 
-function startCounter() {
-  var digit = -1;
+function startCounter(data) {
+  data.digit = -1;
   return setInterval(function () {
-    digit += 1;
-    if (digit > 9) { digit = 0; }
-    numbers['display' + digit]();
+    data.digit += 1;
+    if (data.digit > 9) { data.digit = 0; }
+    numbers['display' + data.digit]();
   }, 1000);
 }
 
@@ -90,9 +91,9 @@ function arm() {
   clearAll();
   numbers.displayDot();
   var buttonPublisher = startLoop(configData);
-  buttonPublisher.subscribe(function (pressDuration) {
+  buttonPublisher.subscribe(function (digit) {
     clearAll();
-    if (pressDuration === configData.disarmCount) disarm();
+    if (digit === configData.disarmCount) disarm();
     else boom();
   });
   device.publish(mainTopic, JSON.stringify({ event: 'armed', device: deviceName }));
